@@ -1,0 +1,22 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <f:description>
+        Works only in dynamic pod template with pipeline syntax like podTemplate(label: xx, inheritFrom: xx) {...}
+        Allocates a PVC dynamically using the specified parameters and job full name, reuse PVC if possible, remove PVC if job deleted.
+        Note that this requires the Jenkins master to have additional RBAC permissions than are typically needed for agent provisioning.
+    </f:description>
+
+    <f:entry title="${%Storage Class Name}" field="storageClassName">
+        <f:textbox />
+    </f:entry>
+
+    <f:entry title="${%Requests Size}" field="requestsSize">
+        <f:textbox />
+    </f:entry>
+
+    <f:entry title="${%Access Modes}" field="accessModes">
+        <f:select default="ReadWriteOnce"/>
+    </f:entry>
+
+</j:jelly>

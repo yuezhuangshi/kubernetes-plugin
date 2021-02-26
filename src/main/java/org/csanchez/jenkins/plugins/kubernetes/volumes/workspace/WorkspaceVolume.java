@@ -25,12 +25,16 @@
 package org.csanchez.jenkins.plugins.kubernetes.volumes.workspace;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 import hudson.model.AbstractDescribableImpl;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaim;
 import io.fabric8.kubernetes.api.model.Volume;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import org.csanchez.jenkins.plugins.kubernetes.PodAnnotation;
+
+import javax.annotation.Nonnull;
 
 /**
  * Base class for all Kubernetes volume types
@@ -57,6 +61,16 @@ public abstract class WorkspaceVolume extends AbstractDescribableImpl<WorkspaceV
     @Deprecated
     public Volume buildVolume(String volumeName){
         throw new UnsupportedOperationException("could not build volume without podName");
+    }
+
+    /**
+     * This method is called as first thing to process pod annotations that could have
+     * required informations to build this volume.
+     *
+     * @param annotations a list of pod annotations defined by template or by
+     *        providers
+     */
+    public void processAnnotations(@Nonnull Collection<PodAnnotation> annotations) {
     }
 
     public PersistentVolumeClaim createVolume(KubernetesClient client, ObjectMeta podMetaData) {
