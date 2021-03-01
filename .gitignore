@@ -5,6 +5,9 @@
 /.settings/
 /work/
 
+pom.xml.releaseBackup
+release.properties
+
 /.idea/
 *.iml
 nbactions.xml
