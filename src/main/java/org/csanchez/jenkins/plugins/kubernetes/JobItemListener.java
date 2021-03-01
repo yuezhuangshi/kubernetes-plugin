@@ -30,16 +30,9 @@ public class JobItemListener extends ItemListener {
     private static final Logger LOGGER = Logger.getLogger(JobItemListener.class.getName());
 
     @Override
-    public void onRenamed(Item item, String oldName, String newName) {
-        // oldName and newName are not item full name, we need item full name here.
-        String newItemFullName = item.getFullName();
-        String[] split = newItemFullName.split("/");
-        split[split.length - 1] = oldName;
-        String oldItemFullName = String.join("/", Arrays.asList(split));
+    public void onLocationChanged(Item item, String oldFullName, String newFullName) {
         if (item instanceof Job)  {
-            deletePVC(oldItemFullName);
-        } else if (item instanceof Folder) {
-            walkTree((Folder) item, oldItemFullName, newItemFullName);
+            deletePVC(oldFullName);
         }
     }
 
@@ -47,20 +40,6 @@ public class JobItemListener extends ItemListener {
     public void onDeleted(Item item) {
         if (item instanceof Job) {
             deletePVC(item.getFullName());
-        }
-    }
-
-    private void walkTree(Folder folder, String oldItemFullName, String newItemFullName) {
-        Collection<TopLevelItem> items = folder.getItems();
-        for (TopLevelItem item : items) {
-            if (item instanceof Job)  {
-                // need old job full name here to delete pvc.
-                String newJobFullName = item.getFullName();
-                String oldJobFullName = newJobFullName.replaceFirst(newItemFullName, oldItemFullName);
-                deletePVC(oldJobFullName);
-            } else if (item instanceof Folder) {
-                walkTree((Folder) item, oldItemFullName, newItemFullName);
-            }
         }
     }
 
