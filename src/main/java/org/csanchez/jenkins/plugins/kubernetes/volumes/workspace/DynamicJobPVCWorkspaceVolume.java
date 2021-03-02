@@ -83,7 +83,7 @@ public class DynamicJobPVCWorkspaceVolume extends WorkspaceVolume {
         return new VolumeBuilder()
                 .withName(volumeName)
                 .withNewPersistentVolumeClaim()
-                .withClaimName(getPVCName(jobFullName))
+                .withClaimName(normalizedJobFullName(jobFullName))
                 .withReadOnly(false)
                 .and()
                 .build();
@@ -104,7 +104,7 @@ public class DynamicJobPVCWorkspaceVolume extends WorkspaceVolume {
     public PersistentVolumeClaim createVolume(KubernetesClient client, ObjectMeta podMetaData){
         String namespace = podMetaData.getNamespace();
         String podName = podMetaData.getName();
-        String pvcName = getPVCName(jobFullName);
+        String pvcName = normalizedJobFullName(jobFullName);
         LOGGER.log(Level.FINE, "Adding workspace volume {0} from pod: {1}/{2}", new Object[] { pvcName, namespace, podName });
 
         // try to use exist pvc, or else create one
@@ -165,8 +165,12 @@ public class DynamicJobPVCWorkspaceVolume extends WorkspaceVolume {
         return builder.build();
     }
 
-    public static String getPVCName(String jobFullName) {
-        return "pvc-" + jobFullName.trim().replace(' ', '-').replace('/', '-').toLowerCase();
+    public static String normalizedJobFullName(String jobFullName) {
+        return "pvc-" + jobFullName.trim()
+            .replace(' ', '-')
+            .replace('_', '-')
+            .replace('/', '-')
+            .toLowerCase();
     }
 
     @Override
